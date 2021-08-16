@@ -19,16 +19,16 @@ class DependencyPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.android.applicationVariants.all { variant ->
             println(TAG + "variant: " + variant.name)
-            whiteList.clear()
-            whiteList.addAll(project.rootProject.file('white_list.prop').readLines())
-            project.configurations.each { Configuration configuration ->
-                if (configuration.name.toLowerCase().contains("${variant.name}runtimeclasspath")) {
-                    configuration.incoming.resolutionResult.root.dependencies.each { DependencyResult dr ->
-                        boolean accept = acceptDependency(new Dependency(dr, null))
-                        println(TAG + dr.requested.displayName + " : " + accept)
-                    }
-                }
-            }
+//            whiteList.clear()
+//            whiteList.addAll(project.rootProject.file('white_list.prop').readLines())
+//            project.configurations.each { Configuration configuration ->
+//                if (configuration.name.toLowerCase().contains("${variant.name}runtimeclasspath")) {
+//                    configuration.incoming.resolutionResult.root.dependencies.each { DependencyResult dr ->
+//                        boolean accept = acceptDependency(new Dependency(dr, null))
+//                        println(TAG + dr.requested.displayName + " : " + accept)
+//                    }
+//                }
+//            }
         }
     }
 

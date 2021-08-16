@@ -15,3 +15,51 @@ ext {
 }
 
 println("setting_ext_pro: " + setting_ext_pro)
+
+
+//build.gradle或settings.gradle
+
+this.gradle.buildStarted {
+    println "Gradle构建开始"
+}
+
+//---------------------init开始--------------------------------
+this.gradle.settingsEvaluated {
+    println "settings.gradle解析完成"
+}
+this.gradle.projectsLoaded {
+    println "所有项目从settings加载完成"
+}
+//---------------------init结束--------------------------------
+
+//-------------------configure开始-----------------------------
+this.gradle.beforeProject {project ->
+    //每一个项目构建之前被调用
+    println "${project.name}项目开始构建"
+}
+this.gradle.afterProject {project ->
+    //每一个项目构建完成被调用
+    println "${project.name}项目构建完成"
+}
+this.gradle.projectsEvaluated {
+    println "所有项目构建完成"
+}
+this.gradle.taskGraph.whenReady {
+    println("task图构建完成")
+}
+//-------------------configure结束-----------------------------
+
+//-------------------execute开始-----------------------------
+this.gradle.taskGraph.beforeTask {task ->
+    //每个task开始执行时会调用这个方法
+    println("${task.name}task开始执行")
+}
+this.gradle.taskGraph.afterTask {task ->
+    //每个task执行结束时会调用这个方法
+    println("${task.name}task执行完成")
+}
+//-------------------execute结束-----------------------------
+
+this.gradle.buildFinished {
+    println "Gradle构建结束"
+}
