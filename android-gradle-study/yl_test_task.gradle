@@ -1,0 +1,40 @@
+class MyTask extends DefaultTask {
+
+    String message = "mytask..."
+
+    @TaskAction
+    def ss1() {
+        println("This is MyTask --> action1!")
+    }
+
+    @TaskAction
+    def ss2() {
+        println("This is MyTask --> action2!")
+    }
+
+}
+
+task speak(type: MyTask) {
+    println("This is AA!")
+    doFirst {
+        println("This is speak doFirst!")
+    }
+    doLast {
+        println("This is speak doLast!")
+    }
+}
+
+
+// 继承自copy任务
+task copyTest (type: Copy) {
+    from 'images/'  //从哪个文件夹开始
+    into 'copy_images/' //拷到按个文件夹
+    include "*.png"
+    exclude "1.png" // 排除
+    rename("2.png","456.png")
+    rename("3.png","abc.png")
+}
+
+task deleteTest (type: Delete) {
+    delete 'copy_images/'
+}

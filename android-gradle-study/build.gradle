@@ -61,6 +61,8 @@ task doSomethingAfterAssemble(group: 'demo') {
 }
 
 apply from: 'groovy_test.gradle'
+apply from: 'yl_test_task.gradle'
+apply from: 'yl_test_closure.gradle'
 
 println("Root build.gradle getScriptClassPath: " + project.buildscript.getScriptClassPath())
 
@@ -69,3 +71,12 @@ ext {
 }
 
 println("root_project_ext_pro: " + root_project_ext_pro)
+
+Settings
+gradle.getTaskGraph().addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
+    @Override
+    void graphPopulated(TaskExecutionGraph graph) {
+        graph.whenReady {
+        }
+    }
+})

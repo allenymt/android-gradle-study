@@ -13,9 +13,45 @@ def runEach(closure) {
 task doTestFirstLast {
     description 'doTestFirstLast task'
     doFirst {
-        println("this action will run first!")
+        println("this action will run first1!")
+    }
+    doFirst {
+        println("this action will run first2!")
     }
     doLast {
         println("this action will run last!")
     }
+    println("this action do Action")
 }
+
+
+
+task s1{
+    doLast {
+        println("This is s1...")
+    }
+}
+
+task s2{
+    doLast {
+        println("This is s2...")
+    }
+}
+s1.dependsOn s2
+
+//闭包委托
+class Person {
+    String name
+    int age
+
+
+}
+def cc = {
+    name = "hanmeimei"
+    age = 26
+}
+Person person = new Person()
+cc.delegate = person
+println("yulun cc type is ${cc.getClass()}")
+cc.call()
+println("yulun person name is ${person.name}")

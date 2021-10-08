@@ -9,7 +9,6 @@ gradle.afterProject {
     project ->
         println("afterProject: " + project)
 }
-
 ext {
     setting_ext_pro = 'hello'
 }
@@ -35,8 +34,9 @@ this.gradle.projectsLoaded {
 //-------------------configure开始-----------------------------
 this.gradle.beforeProject {project ->
     //每一个项目构建之前被调用
-    println "${project.name}项目开始构建"
+    println "${project.name}项目开始构建123yulun"
 }
+
 this.gradle.afterProject {project ->
     //每一个项目构建完成被调用
     println "${project.name}项目构建完成"
@@ -63,3 +63,4 @@ this.gradle.taskGraph.afterTask {task ->
 this.gradle.buildFinished {
     println "Gradle构建结束"
 }
+

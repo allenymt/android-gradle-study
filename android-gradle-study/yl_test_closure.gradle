@@ -1,0 +1,44 @@
+//TODO 没跑通的，给的案例太烂
+//class Android1 {
+//    int compileSdkVersion1
+//    String buildToolsVersion1
+//    BefaultConfig mBefaultConfig1
+//
+//    Android1() {
+//        this.mBefaultConfig1 = new BefaultConfig()
+//    }
+//
+//    void defaultConfig1(Closure closure) {
+//        closure.setDelegate(mBefaultConfig1)
+//        closure.setResolveStrategy(Closure.DELEGATE_FIRST)
+//        closure.call()
+//    }
+//}
+//
+//class BefaultConfig {
+//    int versionCode1
+//    String versionName1
+//    int minSdkVersion1
+//    int mTargetSdkVersion
+//}
+//
+//def android2 = {
+////    compileSdkVersion1 25
+////    buildToolsVersion1 "25.0.2"
+//
+//    // 这个对应相应的方法
+//    defaultConfig1 {
+//        minSdkVersion1 15
+//        versionCode1 1
+//        versionName1 "1.0"
+//    }
+//}
+//
+//Android1 bean = new Android1()
+//android2.delegate = bean
+//android2.call()
+
+//task lll {
+//    println(android2)
+//}
+

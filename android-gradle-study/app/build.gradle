@@ -1,7 +1,33 @@
 println("App build.gradle: " + project)
-project.beforeEvaluate {
+project.beforeEvaluate { // 这里肯定是无效的，本project都开始了，监听配置执行没有意义
     println '项目开始构建1'
 }
+
+
+
+// 根项目-获得所有的project,包括自身，第一个就是rootProject
+rootProject.getAllprojects().eachWithIndex { Project project, int index ->
+    println("rootProject getAllprojects index $index : $project.name")
+}
+
+// 获得所有的project,包括自身，第一个就是rootProject
+project.getAllprojects().eachWithIndex { Project project, int index ->
+    println("currentProject getAllprojects index $index : $project.name")
+}
+
+rootProject.getSubprojects().eachWithIndex { Project project, int index ->
+    println("rootProject getSubprojects index $index : $project.name")
+}
+
+project.getSubprojects().eachWithIndex { Project project, int index ->
+    println("currentProject getSubprojects index $index : $project.name")
+}
+
+println("getRootProject ${project.getRootProject()}")
+
+
+println("getParent ${project.getParent()}")
+
 project.afterEvaluate {
     println '项目构建结束1'
 }
