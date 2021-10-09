@@ -4,7 +4,6 @@ project.beforeEvaluate { // 这里肯定是无效的，本project都开始了，
 }
 
 
-
 // 根项目-获得所有的project,包括自身，第一个就是rootProject
 rootProject.getAllprojects().eachWithIndex { Project project, int index ->
     println("rootProject getAllprojects index $index : $project.name")
@@ -46,23 +45,45 @@ apply plugin: 'dependency-plugin'
 apply plugin: 'property-read-plugin'
 //apply plugin: 'com.jakewharton.butterknife'
 apply from: rootProject.file('tools.gradle')
-
+apply from: rootProject.file("build_config/build_config.gradle")
 demoConfig {
     enable = true
     message = 'hello world'
     strings = ['a', 'b']
 }
 
+def buildTimes() {
+    return new Date().format("yyyyMMdd")
+}
+
+
 android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.jeremyliao.gradle"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+
+    flavorDimensions "yulun1","yulun2","yulun3"
+    productFlavors {
+        A {
+            dimension("yulun1")
+        }
+        B {
+            dimension("yulun2")
+        }
+        C {
+            dimension("yulun3")
+        }
+        D {
+            dimension("yulun1")
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -76,6 +97,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -83,6 +105,25 @@ android {
     android {
         lintOptions {
             abortOnError false
+        }
+    }
+
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (output.outputFile == null && !output.outputFile.name.endsWith('.apk')) {
+                contiue
+            }
+
+            def info = ""
+
+            // 因为维度存在，所以一个 variant 可能由有一个以上的 Flavor 交叉组成，所以这里 Flavor 名也是复数的
+            variant.productFlavors.each{
+                info = info + it.name + "_"
+            }
+
+            println("TAG:${variant.name}/${info}")
+            outputFileName = "${info}${variant.buildType.name}_v${variant.versionCode}_${buildTimes()}.apk"
         }
     }
 }
@@ -110,6 +151,7 @@ project.android.applicationVariants.all { variant ->
         System.out.println("[TEST]" + "22version: " + version)
     }
 }
+
 
 //project.android.applicationVariants.all { variant ->
 //    System.out.println("[DEPENDENCY]" + "variant: " + variant.name)
