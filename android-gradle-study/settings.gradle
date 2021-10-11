@@ -1,3 +1,4 @@
+apply from :'collect_time.gradle'
 include ':app', ':compiler', ':plugin', ':plugin1', ':testlibrary'
 
 println("setting.gradle: " + settings)
