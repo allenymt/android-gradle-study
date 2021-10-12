@@ -43,6 +43,11 @@ apply plugin: 'ags-java-plugin'
 apply plugin: 'ags-test-plugin'
 apply plugin: 'dependency-plugin'
 apply plugin: 'property-read-plugin'
+
+// 在buildSrc下写plugin的好处就是不需要在外层添加classpath依赖
+// 但插件一般都是单独成库的，怎么和发布插件联动是个问题，所以一般都单独写plugin的形式来写
+apply plugin: 'com.yl.gradle.study'
+
 //apply plugin: 'com.jakewharton.butterknife'
 apply from: rootProject.file('tools.gradle')
 apply from: rootProject.file("build_config/build_config.gradle")
@@ -174,3 +179,16 @@ project.android.applicationVariants.all { variant ->
 println("app build.gradle getScriptClassPath: " + project.buildscript.getScriptClassPath())
 println("root_project_ext_pro in module: " + root_project_ext_pro)
 println("getTimeStamp: " + getTimeStamp())
+
+
+// 利用代码挂载到生命周期
+// 在配置阶段执行完之后执行 writeTask
+this.project.afterEvaluate { project ->
+    // 找到build task
+    def buildTask = project.tasks.findByName("build")
+    // 挂载一个doLast，调用我们自己的任务
+    buildTask.doLast {
+        // 5.x 上使用 finalizedBy
+        writeTask.execute()
+    }
+}

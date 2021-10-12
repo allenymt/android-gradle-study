@@ -26,16 +26,16 @@ task speak(type: MyTask) {
 
 
 // 继承自copy任务
-task copyTest (type: Copy) {
+task copyTest(type: Copy) {
     from 'images/'  //从哪个文件夹开始
     into 'copy_images/' //拷到按个文件夹
     include "*.png"
     exclude "1.png" // 排除
-    rename("2.png","456.png")
-    rename("3.png","abc.png")
+    rename("2.png", "456.png")
+    rename("3.png", "abc.png")
 }
 
-task deleteTest (type: Delete) {
+task deleteTest(type: Delete) {
     delete 'copy_images/'
 }
 
@@ -59,4 +59,78 @@ task apkMove() {
             }
         }
     }
+}
+
+
+/********task依赖方式*********/
+//静态依赖
+task task1 {
+    doLast {
+        println "This is task1"
+    }
+}
+
+task task2 {
+    doLast {
+        println "This is task2"
+    }
+}
+
+// Task 静态依赖方式1 (常用）
+task task3(dependsOn: [task1, task2]) {
+    doLast {
+        println "This is task3"
+    }
+}
+
+// Task 静态依赖方式2
+task3.dependsOn(task1, task2)
+
+
+// Task 动态依赖方式
+task dytask4 {
+    dependsOn this.tasks.findAll { task ->
+        return task.name.startsWith("task")
+    }
+    doLast {
+        println "This is task4"
+    }
+}
+
+
+// 通过 API 指定依赖顺序
+task taskX {
+    mustRunAfter "taskY"
+
+    doFirst {
+        println "this is taskX"
+    }
+}
+task taskY {
+    // 使用 mustRunAfter 指定依赖的（一至多个）前置 task
+    // 也可以使用 shouldRunAfter 的方式，但是是非强制的依赖
+//    shouldRunAfter taskA
+    doFirst {
+        println "this is taskY"
+    }
+}
+task taskZ(dependsOn: [taskX, taskY]) {
+    mustRunAfter "taskY"
+    doFirst {
+        println "this is taskZ"
+    }
+}
+
+/********task依赖方式*********/
+
+
+// 2、将 doc 复制到 build/target 目录下
+task copyDocs(type: Copy) {
+    from 'src/main/doc'
+    into 'build/target/doc'
+}
+// 3、执行时会复制源文件到目标目录，然后从目标目录删除所有非复制文件
+task syncFile(type: Sync) {
+    from 'src/main/doc'
+    into 'build/target/doc'
 }
