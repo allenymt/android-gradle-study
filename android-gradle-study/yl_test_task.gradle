@@ -38,3 +38,25 @@ task copyTest (type: Copy) {
 task deleteTest (type: Delete) {
     delete 'copy_images/'
 }
+
+
+/**
+ * 使用 exec 执行外部命令
+ */
+task apkMove() {
+    doLast {
+        // 在 gradle 的执行阶段去执行
+        def sourcePath = this.buildDir.path + "/outputs/apk/speed/release/"
+        def destinationPath = "/Users/quchao/Downloads/"
+        def command = "mv -f $sourcePath $destinationPath"
+        exec {
+            try {
+                executable "bash"
+                args "-c", command
+                println "The command execute is success"
+            } catch (GradleException e) {
+                println "The command execute is failed"
+            }
+        }
+    }
+}
