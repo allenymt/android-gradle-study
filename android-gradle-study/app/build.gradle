@@ -73,7 +73,7 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
-    flavorDimensions "yulun1","yulun2","yulun3"
+    flavorDimensions "yulun1", "yulun2", "yulun3"
     productFlavors {
         A {
             dimension("yulun1")
@@ -123,7 +123,7 @@ android {
             def info = ""
 
             // 因为维度存在，所以一个 variant 可能由有一个以上的 Flavor 交叉组成，所以这里 Flavor 名也是复数的
-            variant.productFlavors.each{
+            variant.productFlavors.each {
                 info = info + it.name + "_"
             }
 
@@ -191,4 +191,10 @@ this.project.afterEvaluate { project ->
         // 5.x 上使用 finalizedBy
         writeTask.execute()
     }
+}
+
+
+StudyPluginInfo {
+    testExtensionA = "123"
+    testExtensionB = 1.0
 }
