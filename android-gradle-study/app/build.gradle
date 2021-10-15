@@ -194,7 +194,9 @@ this.project.afterEvaluate { project ->
 }
 
 
-StudyPluginInfo {
+studyInfo {
     testExtensionA = "123"
     testExtensionB = 1.0
+    testExtensionC = 10
+    fileName = "yu.txt"
 }

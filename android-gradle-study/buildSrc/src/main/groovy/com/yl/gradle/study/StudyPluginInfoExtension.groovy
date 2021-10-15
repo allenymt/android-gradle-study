@@ -1,13 +1,13 @@
-package com.yl.gradle.study;
+package com.yl.gradle.study
 
 /**
- * @author yulun
- * @sinice 2021-10-13 17:58
+ * @author yulun* @sinice 2021-10-13 17:58
  */
-public class StudyPluginInfoExtension {
-    String testExtensionA;
-    double testExtensionB;
-    int testExtensionC;
+class StudyPluginInfoExtension {
+    String testExtensionA
+    double testExtensionB
+    int testExtensionC
+    String fileName
 
     String getTestExtensionA() {
         return testExtensionA

@@ -1,0 +1,7 @@
+<studyInfo>
+  <study>
+    <testA>123</testA>
+    <testB>1.0</testB>
+    <testC>10</testC>
+  </study>
+</studyInfo>
