@@ -78,7 +78,7 @@ class StudyGradleTask extends DefaultTask {
                         writer.append(line + '\r\n')
                     } else if (index == lengths) {
                         writer.append('\r\r\n' + sw.toString() + '\r\n')
-                        writer.append(lines.get(tlengths))
+                        writer.append(lines.get(lengths))
                     }
                 }
             }

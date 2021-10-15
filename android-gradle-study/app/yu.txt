@@ -4,4 +4,16 @@
     <testB>1.0</testB>
     <testC>10</testC>
   </study>
+
+
+<studyInfo>
+  <testA>123</testA>
+  <testB>1.0</testB>
+  <testC>10</testC>
+
+<studyInfo>
+  <testA>123</testA>
+  <testB>1.0</testB>
+  <testC>10</testC>
+</studyInfo>
 </studyInfo>

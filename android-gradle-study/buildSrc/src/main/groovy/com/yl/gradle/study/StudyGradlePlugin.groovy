@@ -2,6 +2,7 @@ package com.yl.gradle.study
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 
 class StudyGradlePlugin implements Plugin<Project> {
 
@@ -16,14 +17,18 @@ class StudyGradlePlugin implements Plugin<Project> {
         println "Hello plugin...  findByType extensions is " + target.extensions.findByType(StudyPluginInfoExtension.class).testExtensionA
 
         // 创建testStudyTask，读取extensions里的参数
-        target.tasks.create("testStudyTask",{
+        Task testStudyTask = target.tasks.create("testStudyTask",{
             doLast {
                 println "Hello plugin doLast ...  findByName extensions is " + target.extensions.findByName("studyInfo").properties
                 println "Hello plugin doLast ...  findByType extensions is " + target.extensions.findByType(StudyPluginInfoExtension.class).testExtensionA
             }
         })
 
-        target.tasks.create("StudyGradleTask",StudyGradleTask.class)
+        // 创建我们自定义的task，其实就是把这个task加入到task列表中
+        Task StudyGradleTask = target.tasks.create("StudyGradleTask",StudyGradleTask.class)
+
+        // 创建依赖关系，执行StudyGradleTask前先执行testStudyTask
+        StudyGradleTask.dependsOn(testStudyTask)
 
     }
 }
