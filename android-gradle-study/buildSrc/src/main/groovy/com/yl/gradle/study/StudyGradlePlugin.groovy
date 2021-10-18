@@ -1,5 +1,6 @@
 package com.yl.gradle.study
 
+import com.android.build.gradle.AppExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -29,6 +30,11 @@ class StudyGradlePlugin implements Plugin<Project> {
 
         // 创建依赖关系，执行StudyGradleTask前先执行testStudyTask
         StudyGradleTask.dependsOn(testStudyTask)
+
+
+        // 注册我们自定义的 Transform
+        def appExtension = target.extensions.findByType(AppExtension.class)
+        appExtension.registerTransform(new StudyTransform());
 
     }
 }
