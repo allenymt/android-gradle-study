@@ -34,7 +34,7 @@ class StudyTransform extends Transform {
      *      2、CONTENT_JARS：表示需要处理 java 的 class 与 资源文件。
      *      3、CONTENT_RESOURCES：表示需要处理 java 的资源文件。
      *      4、CONTENT_NATIVE_LIBS：表示需要处理 native 库的代码。
-     *      5、CONTENT_DEX：表示需要处理 DEX 文件。
+     *      5、CONTENT_DEX：表示需要处理 DEX 文件。 这真的有用吗、、
      *      6、CONTENT_DEX_WITH_RESOURCES：表示需要处理 DEX 与 java 的资源文件。
      *
      * @return
@@ -75,6 +75,12 @@ class StudyTransform extends Transform {
         def startTime = System.currentTimeMillis()
         def inputs = transformInvocation.inputs
         def outputProvider = transformInvocation.outputProvider
+
+        // 当前transform是否支持增量
+        if (!transformInvocation.isIncremental()) {
+            outputProvider.deleteAll()
+        }
+
         // 删除之前的输出
         if (outputProvider != null)
             outputProvider.deleteAll()
@@ -91,13 +97,13 @@ class StudyTransform extends Transform {
             }
 
             // 遍历 jarInputs（各个依赖所编译成的 jar 文件）
-            input.jarInputs.each { JarInput jarInput ->
-                try {
-                    handleJar(jarInput, outputProvider)
-                } catch (Exception e) {
-                    e.printStackTrace()
-                }
-            }
+//            input.jarInputs.each { JarInput jarInput ->
+//                try {
+//                    handleJar(jarInput, outputProvider)
+//                } catch (Exception e) {
+//                    e.printStackTrace()
+//                }
+//            }
         }
 
         def cost = (System.currentTimeMillis() - startTime) / 1000
@@ -142,12 +148,13 @@ class StudyTransform extends Transform {
                     // 使用 ASM 对 class 文件进行操控
                     println '----------- deal with "jar" class file <' + entryName + '> -----------'
                     jarOutputStream.putNextEntry(zipEntry)
-                    ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
-                    ClassWriter classWriter = new ClassWriter(classReader, org.objectweb.asm.ClassWriter.COMPUTE_MAXS)
-                    ClassVisitor cv = new MyCustomClassVisitor(classWriter, entryName)
-                    classReader.accept(cv, ClassReader.EXPAND_FRAMES)
-                    byte[] code = classWriter.toByteArray()
-                    jarOutputStream.write(code)
+
+//                    ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
+//                    ClassWriter classWriter = new ClassWriter(classReader, org.objectweb.asm.ClassWriter.COMPUTE_MAXS)
+//                    ClassVisitor cv = new MyCustomClassVisitor(classWriter, entryName)
+//                    classReader.accept(cv, ClassReader.EXPAND_FRAMES)
+//                    byte[] code = classWriter.toByteArray()
+                    jarOutputStream.write( ASMCode.run(inputStream).toByteArray())
                 } else {
                     jarOutputStream.putNextEntry(zipEntry)
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
@@ -179,12 +186,14 @@ class StudyTransform extends Transform {
                         println '----------- deal with "class" file <' + name + '> -----------'
                         def classReader = new ClassReader(classFile.bytes)
                         def classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-                        def classVisitor = new MyCustomClassVisitor(classWriter, name)
+                        def classVisitor = new ASMCode.TraceClassAdapter(org.objectweb.asm.Opcodes.ASM5, classWriter)
                         classReader.accept(classVisitor, ClassReader.EXPAND_FRAMES)
                         byte[] codeBytes = classWriter.toByteArray()
                         FileOutputStream fileOutputStream = new FileOutputStream(
                                 classFile.parentFile.absolutePath + File.separator + name
                         )
+                        byte[] bb = classFile.bytes
+                        int length = classFile.length()
                         fileOutputStream.write(codeBytes)
                         fileOutputStream.close()
                     }
