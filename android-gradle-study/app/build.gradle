@@ -71,6 +71,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+//        multiDexEnabled true
     }
 
 //    flavorDimensions "yulun1", "yulun2", "yulun3"
@@ -141,6 +142,7 @@ dependencies {
 //    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0'
 //    implementation project(path: ':testlibrary')
 //    implementation project(path: ':plugin')
+    implementation project(path: ':compiler')
 }
 
 

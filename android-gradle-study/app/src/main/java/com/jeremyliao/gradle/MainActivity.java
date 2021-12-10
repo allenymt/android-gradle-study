@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(444000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void mm() {
-        new A(new B(2));
+        new A(new B(5));
     }
 
     static class A {

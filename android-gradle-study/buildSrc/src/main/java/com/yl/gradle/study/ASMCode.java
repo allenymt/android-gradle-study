@@ -82,7 +82,7 @@ public class ASMCode {
         public void visitTypeInsn(int opcode, String s) {
             if (opcode == Opcodes.NEW && "java/lang/Thread".equals(s)) {
                 find = true;
-                mv.visitTypeInsn(Opcodes.NEW, "com/sample/asm/CustomThread");
+                mv.visitTypeInsn(Opcodes.NEW, "com/jeremyliao/gradle/CustomThread");
                 return;
             }
             super.visitTypeInsn(opcode, s);
@@ -92,9 +92,9 @@ public class ASMCode {
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
             //需要排查CustomThread自己
-            if ("java/lang/Thread".equals(owner) && !className.equals("com/sample/asm/CustomThread") && opcode == Opcodes.INVOKESPECIAL && find) {
+            if ("java/lang/Thread".equals(owner) && !className.equals("com/jeremyliao/gradle/CustomThread") && opcode == Opcodes.INVOKESPECIAL && find) {
                 find = false;
-                mv.visitMethodInsn(opcode, "com/sample/asm/CustomThread", name, desc, itf);
+                mv.visitMethodInsn(opcode, "com/jeremyliao/gradle/CustomThread", name, desc, itf);
                 Log.e("asmcode", "className:%s, method:%s, name:%s", className, methodName, name);
                 return;
             }
