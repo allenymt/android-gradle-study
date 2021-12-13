@@ -95,6 +95,7 @@ class StudyTransform extends Transform {
             // 遍历 jarInputs（各个依赖所编译成的 jar 文件）
             input.jarInputs.each { JarInput jarInput ->
                 try {
+                    // 遍历每个jar文件
                     handleJar(jarInput, transformInvocation)
                 } catch (Exception e) {
                     e.printStackTrace()
@@ -109,19 +110,27 @@ class StudyTransform extends Transform {
 
     // 本地依赖的lib也是当做jar处理
     static void handleJar(JarInput jarInput, TransformInvocation transformInvocation) {
+        // 如果文件名不是以jar结尾，略过
         if (!jarInput.file.getAbsolutePath().endsWith(".jar")) {
             return
         }
-        println("StudyTransform handleJar1 Begin ${jarInput.file.absolutePath}")
+        // 输出路径
         def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name,
                 jarInput.contentTypes, jarInput.scopes, Format.JAR)
+        // 看一个简单的例子：
+        // StudyTransform handleJar1 Begin /Users/yulun/.gradle/caches/transforms-2/files-2.1/c0a80215c58e30f67ea8f44ccf29736a/jetified-animal-sniffer-annotations-1.14.jar ，
+        // 输出路径为39.jar , 下一个transform不会出问题吗？？？
+        // dest is /Users/yulun/android-gradle-study/android-gradle-study/app/build/intermediates/transforms/StudyTransform/debug/39.jar
+        println("StudyTransform handleJar1 Begin ${jarInput.file.absolutePath} ， dest is $dest")
         if (transformInvocation.incremental) {
+            // 增量状态
             switch (jarInput.status) {
                 case Status.ADDED:
                 case Status.CHANGED:
                     println("StudyTransform incremental true Status ${jarInput.status}  file is ${jarInput.file.absolutePath}")
+                    // 新增或修改。处理input字节码
                     asmProcessJar(jarInput.file)
-                    // 处理input字节码
+                    // 必须copy,
                     FileUtils.copyFile(jarInput.file, dest)
                     break
                 case Status.REMOVED:
@@ -131,38 +140,49 @@ class StudyTransform extends Transform {
             }
         } else {
             println("StudyTransform incremental false handleJar file is ${jarInput.file.absolutePath}")
+            // 其实这一步做的就是把源文件(.class)处理完后，重命名成源文件的名称
             asmProcessJar(jarInput.file)
-            // 处理input字节码处理input字节码
+            // 处理input字节码，必须要拷贝
             FileUtils.copyFile(jarInput.file, dest)
         }
     }
 
     static void asmProcessJar(File file) {
+        // 注意此时
+        // 文件不存在，就返回
         if (file == null || !file.exists()) {
             return
         }
         println "asmProcessJar start file is ${file.absolutePath}"
+        // 建立一个临时文件
         File tmpFile = new File(file.getParent() + File.separator + "${file.name}_classes_temp.jar")
         // 避免上次的缓存被重复插入
         if (tmpFile.exists()) {
             tmpFile.delete()
         }
+        // 建立输出流，注意是 JarOutput
         JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(tmpFile))
 
+        // 从当前的file里构建一个JarFile
         def jarFile = new JarFile(file)
+        // 以下是标准模板代码
         Enumeration enumeration = jarFile.entries()
         while (enumeration.hasMoreElements()) {
             JarEntry jarEntry = (JarEntry) enumeration.nextElement()
+            // jar里每个元素的名称，对于java来说，就是类名(文件名)
             String entryName = jarEntry.getName()
+            // 封装成zipEntry why？
             ZipEntry zipEntry = new ZipEntry(entryName)
+            // 针对jarEntry构建输入流
             InputStream inputStream = jarFile.getInputStream(jarEntry)
             if (checkClassFile(entryName)) {
-                // 使用 ASM 对 class 文件进行操控
-                println '----------- deal with "jar" class file <' + entryName + '> -----------'
+//                println '----------- deal with "jar" class file <' + entryName + '> -----------'
                 jarOutputStream.putNextEntry(zipEntry)
+                // 使用 ASM 对 class 文件进行操控
                 jarOutputStream.write(ASMCode.run(inputStream).toByteArray())
             } else {
-                println '----------- undeal with "jar" class file <' + entryName + '> -----------'
+//                println '----------- undeal with "jar" class file <' + entryName + '> -----------'
+                // 如果命中黑名单，不做处理，直接输入
                 jarOutputStream.putNextEntry(zipEntry)
                 jarOutputStream.write(IOUtils.toByteArray(inputStream))
             }
@@ -175,6 +195,7 @@ class StudyTransform extends Transform {
             file.delete()
         }
         println "----------- ${tmpFile.absolutePath} rename to ${file.absolutePath} -----------"
+        // 要把临时文件重命名成源文件的名称
         tmpFile.renameTo(file)
     }
 
@@ -284,10 +305,10 @@ class StudyTransform extends Transform {
                 || entryName.contains("android/arch/")
                 || entryName.contains("android/app/")
                 || entryName.contains("androidx")) {
-            print("checkClassFile className is $entryName false")
+//            print("checkClassFile className is $entryName false")
             return false
         }
-        print("checkClassFile className is $entryName true")
+//        print("checkClassFile className is $entryName true")
         return true
     }
 }
